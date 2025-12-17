@@ -1,3 +1,6 @@
+import { FilePlus, FileDown, Sparkles } from "lucide-react";
+
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-800">
@@ -10,50 +13,43 @@ export default function Home() {
           Fast & Smart PDF Tools — Merge, Compress, and Summarize with AI.
         </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <a
-            href="/tools/merge"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-          >
-            Merge PDFs
-          </a>
-          <a
-            href="/tools/compress"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-          >
-            Compress PDF
-          </a>
-          <a
-            href="/tools/ai-summary"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-          >
-            AI Summary
-          </a>
-        </div>
+         
       </section>
 
       {/* Tools Section */}
       <section className="max-w-5xl mx-auto px-6 pb-24 grid md:grid-cols-3 gap-6">
-        <div className="p-6 bg-white rounded-xl shadow hover:shadow-md">
+         <a
+    href="/tools/merge"
+    className="group p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
+  >
+        <FilePlus className="w-8 h-8 text-blue-600 mb-4 group-hover:scale-110 transition" />
           <h3 className="text-xl font-semibold mb-2">Merge PDFs</h3>
           <p className="text-gray-600">
             Combine multiple PDF files into one clean document.
           </p>
-        </div>
+        </a>
 
-        <div className="p-6 bg-white rounded-xl shadow hover:shadow-md">
+       <a
+    href="/tools/compress"
+    className="group p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
+  >
+           <FileDown className="w-8 h-8 text-blue-600 mb-4 group-hover:scale-110 transition" />
           <h3 className="text-xl font-semibold mb-2">Compress PDF</h3>
           <p className="text-gray-600">
             Reduce file size without losing quality.
           </p>
-        </div>
+        </a>
 
-        <div className="p-6 bg-white rounded-xl shadow hover:shadow-md">
+       <a
+    href="/tools/ai-summary"
+    className="group p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
+  >
+           <Sparkles className="w-8 h-8 text-blue-600 mb-4 group-hover:scale-110 transition" />
           <h3 className="text-xl font-semibold mb-2">AI Summary</h3>
           <p className="text-gray-600">
             Extract and summarize long PDFs with AI in seconds.
           </p>
-        </div>
+        </a>
       </section>
 
       {/* Footer */}
