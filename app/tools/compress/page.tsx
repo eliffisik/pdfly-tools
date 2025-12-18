@@ -1,69 +1,118 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function CompressPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [compressedUrl, setCompressedUrl] = useState("");
+  const [error, setError] = useState("");
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setFile(e.target.files[0]);
+    setFile(e.target.files[0] || null);
+    setCompressedUrl("");
+    setError("");
+  };
+
+  const clearFile = () => {
+    setFile(null);
+    setCompressedUrl("");
+    setError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleCompress = async () => {
-    if (!file) {
-      alert("Lütfen bir PDF seçin.");
-      return;
-    }
+    if (!file) return;
 
     setLoading(true);
+    setError("");
+    setCompressedUrl("");
+
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("/api/compress", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch("/api/compress", {
+        method: "POST",
+        body: formData,
+      });
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "Sıkıştırma başarısız oldu.");
+      }
 
-    setCompressedUrl(url);
-    setLoading(false);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setCompressedUrl(url);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <main className="max-w-xl mx-auto px-6 py-16">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">Compress PDF</h1>
+    <main className="min-h-screen flex items-center justify-center bg-black px-6">
+      <div className="w-full max-w-xl bg-zinc-950 border border-zinc-800 rounded-2xl p-8 shadow-lg">
+        <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">
+          Compress PDF
+        </h1>
 
-      <input
-        type="file"
-        accept=".pdf"
-        onChange={handleFileChange}
-        className="w-full p-3 border rounded mb-4"
-      />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          onChange={handleFileChange}
+          className="w-full p-3 border border-zinc-700 rounded-lg mb-4 bg-zinc-900 text-gray-200"
+        />
 
-      <button
-        onClick={handleCompress}
-        disabled={loading}
-        className="px-6 py-3 bg-blue-600 text-white rounded shadow hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? "Sıkıştırılıyor..." : "PDF'i Sıkıştır"}
-      </button>
+        {file && (
+          <div className="mt-4 flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
+            <span className="text-sm text-gray-200 truncate">📄 {file.name}</span>
+            <button
+              onClick={clearFile}
+              className="text-red-400 hover:text-red-500 text-sm"
+            >
+              Kaldır
+            </button>
+          </div>
+        )}
 
-      {compressedUrl && (
-        <div className="mt-6">
-          <a
-            href={compressedUrl}
-            download="compressed.pdf"
-            className="px-6 py-3 bg-green-600 text-white rounded shadow hover:bg-green-700"
-          >
-            Sıkıştırılmış PDF'i İndir
-          </a>
-        </div>
-      )}
+        <button
+          onClick={handleCompress}
+          disabled={loading || !file}
+          className="mt-6 w-full px-6 py-4 bg-blue-600 text-white rounded-lg font-semibold
+          hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "Sıkıştırılıyor..." : "PDF'i Sıkıştır"}
+        </button>
+
+        {loading && (
+          <p className="mt-4 text-sm text-gray-400 text-center">
+            Lütfen bekleyin, dosya işleniyor...
+          </p>
+        )}
+
+        {error && (
+          <p className="mt-4 text-sm text-red-400 text-center">{error}</p>
+        )}
+
+        {compressedUrl && !loading && !error && (
+          <div className="mt-6 text-center">
+            <a
+              href={compressedUrl}
+              download="compressed.pdf"
+              className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+            >
+              Sıkıştırılmış PDF’i İndir
+            </a>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
