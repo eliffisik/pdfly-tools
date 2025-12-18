@@ -1,5 +1,6 @@
 import "./globals.css";
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
+import PageTransition from "./components/PageTransition";
 
 export default function RootLayout({
   children,
@@ -10,7 +11,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-black text-white">
         <Navbar />
-        {children}
+        <PageTransition>{children}</PageTransition>
       </body>
     </html>
   );
