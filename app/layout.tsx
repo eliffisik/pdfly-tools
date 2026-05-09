@@ -2,6 +2,11 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import PageTransition from "./components/PageTransition";
 
+export const metadata = {
+  title: "PDFly",
+  description: "Fast PDF tools for merging, compressing, and summarizing PDFs.",
+};
+
 export default function RootLayout({
   children,
 }: {

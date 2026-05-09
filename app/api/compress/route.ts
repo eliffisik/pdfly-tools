@@ -1,31 +1,35 @@
 import { NextResponse } from "next/server";
-import { PDFDocument, StandardFonts } from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
+import { jsonError, validatePdfFile } from "../pdf-helpers";
 
 export async function POST(req: Request) {
-  const formData = await req.formData();
-  const file = formData.get("file") as File;
+  try {
+    const formData = await req.formData();
+    const file = formData.get("file");
 
-  if (!file) {
-    return NextResponse.json({ error: "PDF bulunamadı" }, { status: 400 });
+    if (!(file instanceof File)) {
+      return jsonError("PDF file is required.");
+    }
+
+    const validationError = validatePdfFile(file);
+    if (validationError) return jsonError(validationError);
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(arrayBuffer);
+    const compressedPdf = await PDFDocument.create();
+    const pages = await compressedPdf.copyPages(pdf, pdf.getPageIndices());
+    pages.forEach((page) => compressedPdf.addPage(page));
+
+    const compressedBytes = await compressedPdf.save({ useObjectStreams: true });
+
+    return new NextResponse(Buffer.from(compressedBytes), {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": 'attachment; filename="compressed.pdf"',
+      },
+    });
+  } catch (error) {
+    console.error("COMPRESSION ERROR:", error);
+    return jsonError("Unable to compress this PDF.", 500);
   }
-
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await PDFDocument.load(arrayBuffer);
-
-  // Yeni PDF oluştur
-  const compressedPdf = await PDFDocument.create();
-
-  // Tüm sayfaları kopyala (yeniden encode ederek boyutu küçültüyor)
-  const pages = await compressedPdf.copyPages(pdf, pdf.getPageIndices());
-  pages.forEach((page) => compressedPdf.addPage(page));
-
-  // PDF'i kaydet
-  const compressedBytes = await compressedPdf.save({ useObjectStreams: true });
-
-  return new NextResponse(Buffer.from(compressedBytes), {
-    headers: {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": 'attachment; filename="compressed.pdf"',
-    },
-  });
 }

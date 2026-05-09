@@ -1,18 +1,22 @@
 "use client";
 
+import { FileText, X } from "lucide-react";
 import { useRef, useState } from "react";
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Something went wrong.";
+}
 
 export default function AISummaryPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
   const [error, setError] = useState("");
-
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    setFile(e.target.files[0] || null);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return;
+    setFile(event.target.files[0] || null);
     setSummary("");
     setError("");
   };
@@ -35,80 +39,86 @@ export default function AISummaryPage() {
     formData.append("file", file);
 
     try {
-      const res = await fetch("/api/ai-summary", {
+      const response = await fetch("/api/ai-summary", {
         method: "POST",
         body: formData,
       });
 
-      const data = await res.json().catch(() => null);
+      const data = await response.json().catch(() => null);
 
-      if (!res.ok) {
-        throw new Error(data?.error || "Özet çıkarma başarısız oldu.");
+      if (!response.ok) {
+        throw new Error(data?.error || "Summary failed.");
       }
 
-      setSummary(data.summary || "");
-    } catch (err: any) {
-      setError(err.message);
+      setSummary(data?.summary || "");
+    } catch (summaryError) {
+      setError(getErrorMessage(summaryError));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black px-6">
-      <div className="w-full max-w-xl bg-zinc-950 border border-zinc-800 rounded-2xl p-8 shadow-lg">
-        <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">
+    <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 py-12">
+      <section className="w-full max-w-xl rounded-lg border border-zinc-800 bg-zinc-900 p-8 shadow-lg">
+        <h1 className="mb-2 text-center text-3xl font-bold text-white">
           AI Summary
         </h1>
+        <p className="mb-6 text-center text-sm text-zinc-400">
+          Upload a text-based PDF and turn it into a concise summary.
+        </p>
 
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf"
+          accept="application/pdf,.pdf"
           onChange={handleFileChange}
-          className="w-full p-3 border border-zinc-700 rounded-lg mb-4 bg-zinc-900 text-gray-200"
+          className="w-full rounded-lg border border-zinc-700 bg-zinc-950 p-3 text-sm text-zinc-200"
         />
 
         {file && (
-          <div className="mt-4 flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3">
-            <span className="text-sm text-gray-200 truncate">📄 {file.name}</span>
+          <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
+            <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-200">
+              <FileText className="h-4 w-4 shrink-0 text-blue-400" />
+              <span className="truncate">{file.name}</span>
+            </span>
             <button
+              type="button"
               onClick={clearFile}
-              className="text-red-400 hover:text-red-500 text-sm"
+              className="rounded-md p-1 text-zinc-400 transition hover:bg-zinc-800 hover:text-red-300"
+              aria-label={`Remove ${file.name}`}
             >
-              Kaldır
+              <X className="h-4 w-4" />
             </button>
           </div>
         )}
 
         <button
+          type="button"
           onClick={handleSummary}
           disabled={loading || !file}
-          className="mt-6 w-full px-6 py-4 bg-blue-600 text-white rounded-lg font-semibold
-          hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Özetleniyor..." : "PDF'i Özetle"}
+          {loading ? "Summarizing..." : "Summarize PDF"}
         </button>
 
         {loading && (
-          <p className="mt-4 text-sm text-gray-400 text-center">
-            PDF analiz ediliyor, lütfen bekleyin...
+          <p className="mt-4 text-center text-sm text-zinc-400">
+            Reading the PDF and preparing the summary...
           </p>
         )}
 
-        {error && (
-          <p className="mt-4 text-sm text-red-400 text-center">{error}</p>
-        )}
+        {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
 
         {summary && !loading && !error && (
-          <div className="mt-6 p-4 bg-zinc-900 border border-zinc-800 rounded-lg">
-            <h2 className="text-lg font-semibold text-gray-100 mb-2">
-              Summary
-            </h2>
-            <p className="text-gray-200 whitespace-pre-line">{summary}</p>
+          <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+            <h2 className="mb-2 text-lg font-semibold text-white">Summary</h2>
+            <p className="whitespace-pre-line text-sm leading-6 text-zinc-200">
+              {summary}
+            </p>
           </div>
         )}
-      </div>
+      </section>
     </main>
   );
 }
