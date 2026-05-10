@@ -1,7 +1,8 @@
 "use client";
 
-import { FileText, X } from "lucide-react";
-import { useRef, useState } from "react";
+import FileDropzone from "@/app/components/FileDropzone";
+import SelectedFileRow from "@/app/components/SelectedFileRow";
+import { useState } from "react";
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Something went wrong.";
@@ -12,11 +13,9 @@ export default function MergePage() {
   const [loading, setLoading] = useState(false);
   const [mergedPdfUrl, setMergedPdfUrl] = useState("");
   const [error, setError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return;
-    setFiles(Array.from(event.target.files));
+  const handleFilesSelected = (selectedFiles: File[]) => {
+    setFiles(selectedFiles);
     setMergedPdfUrl("");
     setError("");
   };
@@ -26,10 +25,6 @@ export default function MergePage() {
     setFiles(updatedFiles);
     setMergedPdfUrl("");
     setError("");
-
-    if (updatedFiles.length === 0 && fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   const handleMerge = async () => {
@@ -72,13 +67,12 @@ export default function MergePage() {
           Upload at least two PDFs and combine them in the selected order.
         </p>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="application/pdf,.pdf"
+        <FileDropzone
+          label="Drop PDFs here"
+          helperText="or click to choose multiple PDF files"
           multiple
-          onChange={handleFileChange}
-          className="w-full rounded-lg border border-zinc-300 bg-white p-3 text-sm text-zinc-800 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
+          disabled={loading}
+          onFilesSelected={handleFilesSelected}
         />
 
         {files.length > 0 && (
@@ -88,24 +82,11 @@ export default function MergePage() {
             </p>
 
             {files.map((file, index) => (
-              <div
+              <SelectedFileRow
                 key={`${file.name}-${file.lastModified}`}
-                className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950"
-              >
-                <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200">
-                  <FileText className="h-4 w-4 shrink-0 text-blue-400" />
-                  <span className="truncate">{file.name}</span>
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => removeFile(index)}
-                  className="rounded-md p-1 text-zinc-500 transition hover:bg-zinc-200 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-red-300"
-                  aria-label={`Remove ${file.name}`}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
+                file={file}
+                onRemove={() => removeFile(index)}
+              />
             ))}
           </div>
         )}

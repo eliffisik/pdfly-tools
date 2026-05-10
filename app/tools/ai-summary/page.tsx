@@ -1,7 +1,8 @@
 "use client";
 
-import { FileText, X } from "lucide-react";
-import { useRef, useState } from "react";
+import FileDropzone from "@/app/components/FileDropzone";
+import SelectedFileRow from "@/app/components/SelectedFileRow";
+import { useState } from "react";
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Something went wrong.";
@@ -12,11 +13,9 @@ export default function AISummaryPage() {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
   const [error, setError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return;
-    setFile(event.target.files[0] || null);
+  const handleFilesSelected = (selectedFiles: File[]) => {
+    setFile(selectedFiles[0] || null);
     setSummary("");
     setError("");
   };
@@ -25,7 +24,6 @@ export default function AISummaryPage() {
     setFile(null);
     setSummary("");
     setError("");
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSummary = async () => {
@@ -68,28 +66,16 @@ export default function AISummaryPage() {
           Upload a text-based PDF and turn it into a concise summary.
         </p>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="application/pdf,.pdf"
-          onChange={handleFileChange}
-          className="w-full rounded-lg border border-zinc-300 bg-white p-3 text-sm text-zinc-800 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
+        <FileDropzone
+          label="Drop a PDF here"
+          helperText="or click to choose one text-based PDF"
+          disabled={loading}
+          onFilesSelected={handleFilesSelected}
         />
 
         {file && (
-          <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
-            <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200">
-              <FileText className="h-4 w-4 shrink-0 text-blue-400" />
-              <span className="truncate">{file.name}</span>
-            </span>
-            <button
-              type="button"
-              onClick={clearFile}
-              className="rounded-md p-1 text-zinc-500 transition hover:bg-zinc-200 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-red-300"
-              aria-label={`Remove ${file.name}`}
-            >
-              <X className="h-4 w-4" />
-            </button>
+          <div className="mt-4">
+            <SelectedFileRow file={file} onRemove={clearFile} />
           </div>
         )}
 
