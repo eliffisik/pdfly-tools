@@ -33,7 +33,7 @@ export const tools: Tool[] = [
     title: "Split PDF",
     shortTitle: "Split",
     description: "Extract page ranges from a PDF into a new file.",
-    status: "coming-soon",
+    status: "available",
     icon: Scissors,
   },
   {
