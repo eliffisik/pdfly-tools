@@ -17,6 +17,64 @@ type ParsedPdf = {
   Pages?: PdfPage[];
 };
 
+function safeDecodePdfText(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function getStatusFromError(error: unknown) {
+  if (typeof error !== "object" || error === null || !("status" in error)) {
+    return null;
+  }
+
+  const status = (error as { status?: unknown }).status;
+  return typeof status === "number" ? status : null;
+}
+
+function getMessageFromError(error: unknown) {
+  if (error instanceof Error) return error.message;
+
+  if (typeof error !== "object" || error === null || !("message" in error)) {
+    return "";
+  }
+
+  const message = (error as { message?: unknown }).message;
+  return typeof message === "string" ? message : "";
+}
+
+function getAiSummaryError(error: unknown) {
+  const status = getStatusFromError(error);
+  const message = getMessageFromError(error);
+
+  if (status === 401) {
+    return {
+      message: "OpenAI API key is invalid. Check OPENAI_API_KEY in .env.local.",
+      status: 401,
+    };
+  }
+
+  if (status === 429) {
+    return {
+      message:
+        "OpenAI rate limit or quota was reached. Check your OpenAI billing and usage limits.",
+      status: 429,
+    };
+  }
+
+  if (status === 400 && message) {
+    return { message, status: 400 };
+  }
+
+  return {
+    message:
+      "Unable to summarize this PDF. Try a text-based PDF or check the server logs.",
+    status: 500,
+  };
+}
+
 function extractTextFromPdf(buffer: Buffer) {
   return new Promise<string>((resolve, reject) => {
     const parser = new PDFParser();
@@ -30,7 +88,7 @@ function extractTextFromPdf(buffer: Buffer) {
       const rawText = pages
         .map((page) =>
           (page.Texts || [])
-            .map((textRun) => decodeURIComponent(textRun.R?.[0]?.T || ""))
+            .map((textRun) => safeDecodePdfText(textRun.R?.[0]?.T || ""))
             .join(" ")
         )
         .join("\n");
@@ -93,6 +151,7 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("AI SUMMARY ERROR:", error);
-    return jsonError("Unable to summarize this PDF.", 500);
+    const summaryError = getAiSummaryError(error);
+    return jsonError(summaryError.message, summaryError.status);
   }
 }
