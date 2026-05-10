@@ -15,7 +15,24 @@ export default function MergePage() {
   const [error, setError] = useState("");
 
   const handleFilesSelected = (selectedFiles: File[]) => {
-    setFiles(selectedFiles);
+    setFiles((currentFiles) => {
+      const nextFiles = [...currentFiles];
+
+      for (const selectedFile of selectedFiles) {
+        const alreadySelected = nextFiles.some(
+          (file) =>
+            file.name === selectedFile.name &&
+            file.size === selectedFile.size &&
+            file.lastModified === selectedFile.lastModified
+        );
+
+        if (!alreadySelected) {
+          nextFiles.push(selectedFile);
+        }
+      }
+
+      return nextFiles;
+    });
     setMergedPdfUrl("");
     setError("");
   };
@@ -68,8 +85,8 @@ export default function MergePage() {
         </p>
 
         <FileDropzone
-          label="Drop PDFs here"
-          helperText="or click to choose multiple PDF files"
+          label={files.length > 0 ? "Add more PDFs" : "Drop PDFs here"}
+          helperText="drop more files or click to choose multiple PDFs"
           multiple
           disabled={loading}
           onFilesSelected={handleFilesSelected}
