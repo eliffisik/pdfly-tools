@@ -59,12 +59,12 @@ export default function AISummaryPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 py-12">
-      <section className="w-full max-w-xl rounded-lg border border-zinc-800 bg-zinc-900 p-8 shadow-lg">
-        <h1 className="mb-2 text-center text-3xl font-bold text-white">
+    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
+      <section className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+        <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
           AI Summary
         </h1>
-        <p className="mb-6 text-center text-sm text-zinc-400">
+        <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Upload a text-based PDF and turn it into a concise summary.
         </p>
 
@@ -73,19 +73,19 @@ export default function AISummaryPage() {
           type="file"
           accept="application/pdf,.pdf"
           onChange={handleFileChange}
-          className="w-full rounded-lg border border-zinc-700 bg-zinc-950 p-3 text-sm text-zinc-200"
+          className="w-full rounded-lg border border-zinc-300 bg-white p-3 text-sm text-zinc-800 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
         />
 
         {file && (
-          <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
-            <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-200">
+          <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
+            <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200">
               <FileText className="h-4 w-4 shrink-0 text-blue-400" />
               <span className="truncate">{file.name}</span>
             </span>
             <button
               type="button"
               onClick={clearFile}
-              className="rounded-md p-1 text-zinc-400 transition hover:bg-zinc-800 hover:text-red-300"
+              className="rounded-md p-1 text-zinc-500 transition hover:bg-zinc-200 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-red-300"
               aria-label={`Remove ${file.name}`}
             >
               <X className="h-4 w-4" />
@@ -103,7 +103,7 @@ export default function AISummaryPage() {
         </button>
 
         {loading && (
-          <p className="mt-4 text-center text-sm text-zinc-400">
+          <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
             Reading the PDF and preparing the summary...
           </p>
         )}
@@ -111,9 +111,11 @@ export default function AISummaryPage() {
         {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
 
         {summary && !loading && !error && (
-          <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
-            <h2 className="mb-2 text-lg font-semibold text-white">Summary</h2>
-            <p className="whitespace-pre-line text-sm leading-6 text-zinc-200">
+          <div className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950">
+            <h2 className="mb-2 text-lg font-semibold text-zinc-950 dark:text-white">
+              Summary
+            </h2>
+            <p className="whitespace-pre-line text-sm leading-6 text-zinc-700 dark:text-zinc-200">
               {summary}
             </p>
           </div>
