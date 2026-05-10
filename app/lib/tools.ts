@@ -3,6 +3,7 @@ import {
   FileImage,
   FilePlus,
   FileQuestion,
+  RotateCw,
   Scissors,
   Sparkles,
   type LucideIcon,
@@ -43,6 +44,14 @@ export const tools: Tool[] = [
     description: "Reduce file size by rebuilding the document structure.",
     status: "available",
     icon: FileDown,
+  },
+  {
+    href: "/tools/rotate",
+    title: "Rotate PDF",
+    shortTitle: "Rotate",
+    description: "Rotate all pages or selected page ranges in a PDF.",
+    status: "available",
+    icon: RotateCw,
   },
   {
     href: "/tools/ai-summary",
