@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { availableTools } from "@/app/lib/tools";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
@@ -31,26 +32,19 @@ export default function Navbar() {
               Home
             </Link>
 
-            <Link
-              href="/tools/merge"
-              className={linkClass(isActive("/tools/merge"))}
-            >
-              Merge
+            <Link href="/tools" className={linkClass(pathname === "/tools")}>
+              Tools
             </Link>
 
-            <Link
-              href="/tools/compress"
-              className={linkClass(isActive("/tools/compress"))}
-            >
-              Compress
-            </Link>
-
-            <Link
-              href="/tools/ai-summary"
-              className={linkClass(isActive("/tools/ai-summary"))}
-            >
-              AI Summary
-            </Link>
+            {availableTools.map((tool) => (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className={linkClass(isActive(tool.href))}
+              >
+                {tool.shortTitle}
+              </Link>
+            ))}
           </div>
           <ThemeToggle />
         </div>
