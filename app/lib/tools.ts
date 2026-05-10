@@ -66,7 +66,7 @@ export const tools: Tool[] = [
     title: "PDF to Images",
     shortTitle: "PDF to Images",
     description: "Convert PDF pages into downloadable image files.",
-    status: "coming-soon",
+    status: "available",
     icon: FileImage,
   },
   {
