@@ -2,6 +2,7 @@
 
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
+import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
 import { RotateCw } from "lucide-react";
 import { useState } from "react";
 
@@ -79,6 +80,7 @@ export default function RotatePage() {
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
+        <ToolPrivacyNote />
 
         {file && (
           <div className="mt-4">

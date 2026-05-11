@@ -2,6 +2,7 @@
 
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
+import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
 import { useState } from "react";
 
 function getErrorMessage(error: unknown) {
@@ -72,6 +73,7 @@ export default function AISummaryPage() {
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
+        <ToolPrivacyNote ai />
 
         {file && (
           <div className="mt-4">

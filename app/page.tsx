@@ -23,10 +23,6 @@ export default function Home() {
           <ToolCard key={tool.href} tool={tool} />
         ))}
       </section>
-
-      <footer className="border-t border-zinc-200 py-6 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-500">
-        <p>Copyright {new Date().getFullYear()} PDFly. Made by Elif Isik.</p>
-      </footer>
     </main>
   );
 }

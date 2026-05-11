@@ -1,4 +1,5 @@
 import "./globals.css";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import PageTransition from "./components/PageTransition";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -19,6 +20,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           <PageTransition>{children}</PageTransition>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

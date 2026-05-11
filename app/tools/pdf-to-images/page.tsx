@@ -2,6 +2,7 @@
 
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
+import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
 import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -135,6 +136,7 @@ export default function PdfToImagesPage() {
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
+        <ToolPrivacyNote />
 
         {file && (
           <div className="mt-4">

@@ -2,6 +2,7 @@
 
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
+import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
 import { useState } from "react";
 
 function getErrorMessage(error: unknown) {
@@ -93,6 +94,7 @@ export default function ImagesToPdfPage() {
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
+        <ToolPrivacyNote />
 
         {files.length > 0 && (
           <div className="mt-6 space-y-3">

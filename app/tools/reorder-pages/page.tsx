@@ -2,6 +2,7 @@
 
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
+import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
 import { useState } from "react";
 
 function getErrorMessage(error: unknown) {
@@ -74,6 +75,7 @@ export default function ReorderPagesPage() {
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
+        <ToolPrivacyNote />
 
         {file && (
           <div className="mt-4">

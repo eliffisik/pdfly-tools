@@ -2,6 +2,7 @@
 
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
+import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
 import { formatFileSize } from "@/app/lib/format";
 import { useState } from "react";
 
@@ -84,6 +85,7 @@ export default function CompressPage() {
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
+        <ToolPrivacyNote />
 
         {file && (
           <div className="mt-4">
