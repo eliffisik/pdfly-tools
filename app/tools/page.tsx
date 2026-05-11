@@ -1,5 +1,4 @@
-import ToolCard from "@/app/components/ToolCard";
-import { tools } from "@/app/lib/tools";
+import ToolsCatalog from "@/app/components/ToolsCatalog";
 
 export default function ToolsPage() {
   return (
@@ -15,11 +14,7 @@ export default function ToolsPage() {
         </p>
       </section>
 
-      <section className="mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-3">
-        {tools.map((tool) => (
-          <ToolCard key={tool.href} tool={tool} />
-        ))}
-      </section>
+      <ToolsCatalog />
     </main>
   );
 }
