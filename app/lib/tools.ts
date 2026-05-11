@@ -1,4 +1,5 @@
 import {
+  FileMinus,
   FileDown,
   FileImage,
   FilePlus,
@@ -53,6 +54,14 @@ export const tools: Tool[] = [
     description: "Rotate all pages or selected page ranges in a PDF.",
     status: "available",
     icon: RotateCw,
+  },
+  {
+    href: "/tools/delete-pages",
+    title: "Delete Pages",
+    shortTitle: "Delete",
+    description: "Remove selected pages and download a cleaned PDF.",
+    status: "available",
+    icon: FileMinus,
   },
   {
     href: "/tools/ai-summary",
