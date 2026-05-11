@@ -1,29 +1,9 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import PDFParser from "pdf2json";
 import { jsonError, validatePdfFile } from "../pdf-helpers";
+import { extractTextFromPdf } from "../pdf-text";
 
 const MAX_SUMMARY_INPUT_CHARS = 12000;
-
-type PdfTextRun = {
-  R?: Array<{ T?: string }>;
-};
-
-type PdfPage = {
-  Texts?: PdfTextRun[];
-};
-
-type ParsedPdf = {
-  Pages?: PdfPage[];
-};
-
-function safeDecodePdfText(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
 
 function getStatusFromError(error: unknown) {
   if (typeof error !== "object" || error === null || !("status" in error)) {
@@ -73,31 +53,6 @@ function getAiSummaryError(error: unknown) {
       "Unable to summarize this PDF. Try a text-based PDF or check the server logs.",
     status: 500,
   };
-}
-
-function extractTextFromPdf(buffer: Buffer) {
-  return new Promise<string>((resolve, reject) => {
-    const parser = new PDFParser();
-
-    parser.on("pdfParser_dataError", (errorData: unknown) => {
-      reject(errorData);
-    });
-
-    parser.on("pdfParser_dataReady", (pdfData: ParsedPdf) => {
-      const pages = pdfData.Pages || [];
-      const rawText = pages
-        .map((page) =>
-          (page.Texts || [])
-            .map((textRun) => safeDecodePdfText(textRun.R?.[0]?.T || ""))
-            .join(" ")
-        )
-        .join("\n");
-
-      resolve(rawText);
-    });
-
-    parser.parseBuffer(buffer);
-  });
 }
 
 export async function POST(req: Request) {

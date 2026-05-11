@@ -101,6 +101,15 @@ export const tools: Tool[] = [
     icon: Sparkles,
   },
   {
+    href: "/tools/extract-text",
+    title: "Extract Text",
+    shortTitle: "Extract Text",
+    description: "Extract readable PDF text into a downloadable TXT file.",
+    status: "available",
+    category: "Convert",
+    icon: FileText,
+  },
+  {
     href: "/tools/pdf-to-images",
     title: "PDF to Images",
     shortTitle: "PDF to Images",
