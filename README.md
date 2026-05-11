@@ -30,29 +30,6 @@ PDFly is a full-stack PDF tools MVP built with Next.js. It provides everyday PDF
 - lucide-react
 - framer-motion
 
-## Getting Started
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Create a local environment file for AI Summary:
-
-```bash
-OPENAI_API_KEY=your_openai_api_key_here
-```
-
-Save it as `.env.local` in the project root. Do not commit `.env.local`.
-
-Run the development server:
-
-```bash
-npm.cmd run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Scripts
 
