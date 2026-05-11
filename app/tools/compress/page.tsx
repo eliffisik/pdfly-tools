@@ -2,27 +2,35 @@
 
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
+import { formatFileSize } from "@/app/lib/format";
 import { useState } from "react";
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Something went wrong.";
 }
 
+type CompressionResult = {
+  originalSize: number;
+  compressedSize: number;
+  url: string;
+};
+
 export default function CompressPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [compressedUrl, setCompressedUrl] = useState("");
+  const [compressionResult, setCompressionResult] =
+    useState<CompressionResult | null>(null);
   const [error, setError] = useState("");
 
   const handleFilesSelected = (selectedFiles: File[]) => {
     setFile(selectedFiles[0] || null);
-    setCompressedUrl("");
+    setCompressionResult(null);
     setError("");
   };
 
   const clearFile = () => {
     setFile(null);
-    setCompressedUrl("");
+    setCompressionResult(null);
     setError("");
   };
 
@@ -31,7 +39,7 @@ export default function CompressPage() {
 
     setLoading(true);
     setError("");
-    setCompressedUrl("");
+    setCompressionResult(null);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -48,7 +56,11 @@ export default function CompressPage() {
       }
 
       const blob = await response.blob();
-      setCompressedUrl(URL.createObjectURL(blob));
+      setCompressionResult({
+        originalSize: file.size,
+        compressedSize: blob.size,
+        url: URL.createObjectURL(blob),
+      });
     } catch (compressError) {
       setError(getErrorMessage(compressError));
     } finally {
@@ -96,12 +108,43 @@ export default function CompressPage() {
 
         {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
 
-        {compressedUrl && !loading && !error && (
-          <div className="mt-6 text-center">
+        {compressionResult && !loading && !error && (
+          <div className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="grid gap-3 text-sm sm:grid-cols-3">
+              <div>
+                <p className="text-zinc-500 dark:text-zinc-500">Original</p>
+                <p className="font-semibold text-zinc-900 dark:text-white">
+                  {formatFileSize(compressionResult.originalSize)}
+                </p>
+              </div>
+              <div>
+                <p className="text-zinc-500 dark:text-zinc-500">Output</p>
+                <p className="font-semibold text-zinc-900 dark:text-white">
+                  {formatFileSize(compressionResult.compressedSize)}
+                </p>
+              </div>
+              <div>
+                <p className="text-zinc-500 dark:text-zinc-500">Change</p>
+                <p className="font-semibold text-zinc-900 dark:text-white">
+                  {Math.abs(
+                    ((compressionResult.originalSize -
+                      compressionResult.compressedSize) /
+                      compressionResult.originalSize) *
+                      100
+                  ).toFixed(1)}
+                  %
+                  {compressionResult.compressedSize <=
+                  compressionResult.originalSize
+                    ? " smaller"
+                    : " larger"}
+                </p>
+              </div>
+            </div>
+
             <a
-              href={compressedUrl}
+              href={compressionResult.url}
               download="compressed.pdf"
-              className="inline-flex rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
+              className="mt-5 inline-flex rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
             >
               Download compressed PDF
             </a>
