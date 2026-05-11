@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 export type ToolStatus = "available" | "coming-soon";
+export type ToolCategory = "Organize" | "Convert" | "Optimize" | "AI";
 
 export type Tool = {
   href: string;
@@ -20,6 +21,7 @@ export type Tool = {
   shortTitle: string;
   description: string;
   status: ToolStatus;
+  category: ToolCategory;
   icon: LucideIcon;
 };
 
@@ -30,6 +32,7 @@ export const tools: Tool[] = [
     shortTitle: "Merge",
     description: "Combine multiple PDF files into one clean document.",
     status: "available",
+    category: "Organize",
     icon: FilePlus,
   },
   {
@@ -38,6 +41,7 @@ export const tools: Tool[] = [
     shortTitle: "Split",
     description: "Extract page ranges from a PDF into a new file.",
     status: "available",
+    category: "Organize",
     icon: Scissors,
   },
   {
@@ -46,6 +50,7 @@ export const tools: Tool[] = [
     shortTitle: "Compress",
     description: "Reduce file size by rebuilding the document structure.",
     status: "available",
+    category: "Optimize",
     icon: FileDown,
   },
   {
@@ -54,6 +59,7 @@ export const tools: Tool[] = [
     shortTitle: "Rotate",
     description: "Rotate all pages or selected page ranges in a PDF.",
     status: "available",
+    category: "Organize",
     icon: RotateCw,
   },
   {
@@ -62,6 +68,7 @@ export const tools: Tool[] = [
     shortTitle: "Delete",
     description: "Remove selected pages and download a cleaned PDF.",
     status: "available",
+    category: "Organize",
     icon: FileMinus,
   },
   {
@@ -70,6 +77,7 @@ export const tools: Tool[] = [
     shortTitle: "Reorder",
     description: "Build a new PDF with pages in your chosen order.",
     status: "available",
+    category: "Organize",
     icon: ListOrdered,
   },
   {
@@ -78,6 +86,7 @@ export const tools: Tool[] = [
     shortTitle: "AI Summary",
     description: "Extract readable text and get a concise summary.",
     status: "available",
+    category: "AI",
     icon: Sparkles,
   },
   {
@@ -86,6 +95,7 @@ export const tools: Tool[] = [
     shortTitle: "PDF to Images",
     description: "Convert PDF pages into downloadable image files.",
     status: "available",
+    category: "Convert",
     icon: FileImage,
   },
   {
@@ -94,6 +104,7 @@ export const tools: Tool[] = [
     shortTitle: "Images to PDF",
     description: "Combine JPG and PNG images into one PDF document.",
     status: "available",
+    category: "Convert",
     icon: Images,
   },
   {
@@ -102,8 +113,17 @@ export const tools: Tool[] = [
     shortTitle: "Ask PDF",
     description: "Ask questions and get answers from a PDF document.",
     status: "coming-soon",
+    category: "AI",
     icon: FileQuestion,
   },
+];
+
+export const toolCategories: Array<"All" | ToolCategory> = [
+  "All",
+  "Organize",
+  "Convert",
+  "Optimize",
+  "AI",
 ];
 
 export const availableTools = tools.filter(
