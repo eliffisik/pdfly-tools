@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PDFly
+
+PDFly is a full-stack PDF tools MVP built with Next.js. It provides everyday PDF workflows such as merging, splitting, compressing, rotating, deleting pages, reordering pages, converting PDFs to images, converting images to PDF, and summarizing text-based PDFs with AI.
+
+## Features
+
+- Merge multiple PDFs into one document
+- Split selected page ranges into a new PDF
+- Compress PDFs by rebuilding document structure with object streams
+- Rotate all pages or selected page ranges
+- Delete selected pages from a PDF
+- Reorder pages with custom page order input
+- Convert PDF pages to PNG images in the browser
+- Convert JPG and PNG images into a PDF
+- Summarize text-based PDFs with OpenAI
+- Light and dark theme support
+- Searchable tools catalog
+- Privacy and security notes for file processing
+
+## Tech Stack
+
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- pdf-lib
+- pdfjs-dist
+- pdf2json
+- OpenAI API
+- lucide-react
+- framer-motion
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a local environment file for AI Summary:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+OPENAI_API_KEY=your_openai_api_key_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Save it as `.env.local` in the project root. Do not commit `.env.local`.
 
-## Learn More
+Run the development server:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm.cmd run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+```bash
+npm.cmd run dev
+npm.cmd run lint
+npm.cmd run build
+npm.cmd run start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## AI Summary Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+AI Summary requires `OPENAI_API_KEY`. It extracts readable text from the uploaded PDF and sends that text to OpenAI for summarization. If the OpenAI account has no API quota or billing is not configured, the app will return a quota or rate limit error.
+
+## Privacy Notes
+
+Non-AI PDF tools process uploaded files only for the requested action and do not store files in the application. Generated files are returned directly to the browser. AI Summary is different because extracted PDF text is sent to OpenAI.
+
+See `/privacy` in the app for the user-facing privacy and security summary.
+
+## Roadmap
+
+- Ask PDF chat workflow
+- OCR for scanned PDFs
+- Stronger compression engine
+- Batch downloads as ZIP
+- Deployment and custom domain
+- Demo screenshots and smoke tests
