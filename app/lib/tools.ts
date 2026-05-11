@@ -7,6 +7,7 @@ import {
   FileText,
   Images,
   ListOrdered,
+  ListPlus,
   RotateCw,
   Scissors,
   Sparkles,
@@ -80,6 +81,15 @@ export const tools: Tool[] = [
     status: "available",
     category: "Organize",
     icon: ListOrdered,
+  },
+  {
+    href: "/tools/page-numbers",
+    title: "Add Page Numbers",
+    shortTitle: "Page Numbers",
+    description: "Add page numbers to every page in a PDF.",
+    status: "available",
+    category: "Organize",
+    icon: ListPlus,
   },
   {
     href: "/tools/ai-summary",

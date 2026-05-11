@@ -31,15 +31,6 @@ PDFly is a full-stack PDF tools MVP built with Next.js. It provides everyday PDF
 - framer-motion
 
 
-## Scripts
-
-```bash
-npm.cmd run dev
-npm.cmd run lint
-npm.cmd run build
-npm.cmd run start
-```
-
 ## AI Summary Notes
 
 AI Summary requires `OPENAI_API_KEY`. It extracts readable text from the uploaded PDF and sends that text to OpenAI for summarization. If the OpenAI account has no API quota or billing is not configured, the app will return a quota or rate limit error.
