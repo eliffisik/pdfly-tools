@@ -3,6 +3,7 @@ import {
   FileImage,
   FilePlus,
   FileQuestion,
+  Images,
   RotateCw,
   Scissors,
   Sparkles,
@@ -68,6 +69,14 @@ export const tools: Tool[] = [
     description: "Convert PDF pages into downloadable image files.",
     status: "available",
     icon: FileImage,
+  },
+  {
+    href: "/tools/images-to-pdf",
+    title: "Images to PDF",
+    shortTitle: "Images to PDF",
+    description: "Combine JPG and PNG images into one PDF document.",
+    status: "available",
+    icon: Images,
   },
   {
     href: "/tools/ask-pdf",

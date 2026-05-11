@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 type FileDropzoneProps = {
   label: string;
   helperText: string;
+  accept?: string;
   multiple?: boolean;
   disabled?: boolean;
   onFilesSelected: (files: File[]) => void;
@@ -14,6 +15,7 @@ type FileDropzoneProps = {
 export default function FileDropzone({
   label,
   helperText,
+  accept = "application/pdf,.pdf",
   multiple = false,
   disabled = false,
   onFilesSelected,
@@ -64,7 +66,7 @@ export default function FileDropzone({
       <input
         ref={inputRef}
         type="file"
-        accept="application/pdf,.pdf"
+        accept={accept}
         multiple={multiple}
         disabled={disabled}
         onChange={(event) => selectFiles(event.target.files)}
