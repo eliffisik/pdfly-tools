@@ -1,5 +1,6 @@
 type ParsePageRangesOptions = {
   allowEmpty?: boolean;
+  dedupe?: boolean;
 };
 
 export function parsePageRanges(
@@ -44,6 +45,10 @@ export function parsePageRanges(
     for (let page = start; page <= end; page += 1) {
       pages.push(page - 1);
     }
+  }
+
+  if (options.dedupe === false) {
+    return pages;
   }
 
   return [...new Set(pages)];

@@ -5,6 +5,7 @@ import {
   FilePlus,
   FileQuestion,
   Images,
+  ListOrdered,
   RotateCw,
   Scissors,
   Sparkles,
@@ -62,6 +63,14 @@ export const tools: Tool[] = [
     description: "Remove selected pages and download a cleaned PDF.",
     status: "available",
     icon: FileMinus,
+  },
+  {
+    href: "/tools/reorder-pages",
+    title: "Reorder Pages",
+    shortTitle: "Reorder",
+    description: "Build a new PDF with pages in your chosen order.",
+    status: "available",
+    icon: ListOrdered,
   },
   {
     href: "/tools/ai-summary",
