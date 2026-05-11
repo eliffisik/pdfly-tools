@@ -1,3 +1,4 @@
+import PDFlyLogo from "@/app/components/PDFlyLogo";
 import ToolCard from "@/app/components/ToolCard";
 import { availableTools } from "@/app/lib/tools";
 
@@ -8,8 +9,8 @@ export default function Home() {
         <p className="mb-4 text-sm font-medium uppercase tracking-[0.24em] text-blue-600 dark:text-blue-300">
           Fast PDF tools for everyday work
         </p>
-        <h1 className="text-5xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-6xl">
-          PDFly
+        <h1 className="flex justify-center">
+          <PDFlyLogo size="lg" />
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-300">
           Merge, compress, and summarize PDFs from a focused web workspace.
