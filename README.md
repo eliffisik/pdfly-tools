@@ -52,7 +52,6 @@ Create a local environment file:
 cp .env.example .env.local
 ```
 
-Add `OPENAI_API_KEY` only if you want to use AI Summary. The non-AI PDF tools work without an API key.
 
 Run the development server:
 
@@ -75,9 +74,6 @@ npm run build
 npm run start
 ```
 
-## AI Summary Notes
-
-AI Summary requires `OPENAI_API_KEY`. It extracts readable text from the uploaded PDF and sends that text to OpenAI for summarization. If the OpenAI account has no API quota or billing is not configured, the app returns a quota or rate limit error.
 
 ## Privacy Notes
 
