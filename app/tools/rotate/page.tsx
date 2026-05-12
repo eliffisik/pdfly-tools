@@ -3,7 +3,10 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import ToolProgress from "@/app/components/ToolProgress";
+import ToolDownloadResult from "@/app/components/ToolDownloadResult";
 import { useLanguage } from "@/app/components/LanguageProvider";
+import { useToast } from "@/app/components/ToastProvider";
 import { toolText } from "@/app/lib/i18n";
 import { RotateCw } from "lucide-react";
 import { useState } from "react";
@@ -16,6 +19,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 
 export default function RotatePage() {
   const { dictionary, locale } = useLanguage();
+  const { showToast } = useToast();
   const copy = toolText[locale].rotate;
   const ui = dictionary.toolUi.rotate;
   const [file, setFile] = useState<File | null>(null);
@@ -62,8 +66,18 @@ export default function RotatePage() {
 
       const blob = await response.blob();
       setRotatedUrl(URL.createObjectURL(blob));
+      showToast({
+        type: "success",
+        title: dictionary.common.success,
+        message: dictionary.common.fileReady,
+      });
     } catch (rotateError) {
-      setError(getErrorMessage(rotateError, dictionary.common.somethingWentWrong));
+      const message = getErrorMessage(
+        rotateError,
+        dictionary.common.somethingWentWrong
+      );
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
     } finally {
       setLoading(false);
     }
@@ -153,24 +167,16 @@ export default function RotatePage() {
           {loading ? ui.loading : copy.title}
         </button>
 
-        {loading && (
-          <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            {ui.progress}
-          </p>
-        )}
+        {loading && <ToolProgress message={ui.progress} />}
 
         {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
 
         {rotatedUrl && !loading && !error && (
-          <div className="mt-6 text-center">
-            <a
-              href={rotatedUrl}
-              download="rotated.pdf"
-              className="inline-flex rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
-            >
-              {ui.download}
-            </a>
-          </div>
+          <ToolDownloadResult
+            href={rotatedUrl}
+            download="rotated.pdf"
+            label={ui.download}
+          />
         )}
       </section>
     </main>

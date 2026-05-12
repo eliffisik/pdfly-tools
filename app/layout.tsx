@@ -4,10 +4,23 @@ import { LanguageProvider } from "./components/LanguageProvider";
 import Navbar from "./components/Navbar";
 import PageTransition from "./components/PageTransition";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { ToastProvider } from "./components/ToastProvider";
 
 export const metadata = {
-  title: "PDFly",
-  description: "Fast PDF tools for merging, compressing, and summarizing PDFs.",
+  metadataBase: new URL("https://pdfly.tools"),
+  title: {
+    default: "PDFly - Fast PDF Tools",
+    template: "%s | PDFly",
+  },
+  description:
+    "Merge, split, compress, convert, and organize PDFs in a focused web workspace.",
+  openGraph: {
+    title: "PDFly - Fast PDF Tools",
+    description:
+      "A focused PDF tools workspace for merging, splitting, compressing, converting, and organizing PDFs.",
+    siteName: "PDFly",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -20,9 +33,11 @@ export default function RootLayout({
       <body className="bg-white text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-white">
         <ThemeProvider>
           <LanguageProvider>
-            <Navbar />
-            <PageTransition>{children}</PageTransition>
-            <Footer />
+            <ToastProvider>
+              <Navbar />
+              <PageTransition>{children}</PageTransition>
+              <Footer />
+            </ToastProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

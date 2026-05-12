@@ -3,7 +3,9 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import ToolProgress from "@/app/components/ToolProgress";
 import { useLanguage } from "@/app/components/LanguageProvider";
+import { useToast } from "@/app/components/ToastProvider";
 import { formatFileSize } from "@/app/lib/format";
 import { toolText } from "@/app/lib/i18n";
 import { useState } from "react";
@@ -20,6 +22,7 @@ type CompressionResult = {
 
 export default function CompressPage() {
   const { dictionary, locale } = useLanguage();
+  const { showToast } = useToast();
   const copy = toolText[locale].compress;
   const ui = dictionary.toolUi.compress;
   const [file, setFile] = useState<File | null>(null);
@@ -67,8 +70,18 @@ export default function CompressPage() {
         compressedSize: blob.size,
         url: URL.createObjectURL(blob),
       });
+      showToast({
+        type: "success",
+        title: dictionary.common.success,
+        message: dictionary.common.fileReady,
+      });
     } catch (compressError) {
-      setError(getErrorMessage(compressError, dictionary.common.somethingWentWrong));
+      const message = getErrorMessage(
+        compressError,
+        dictionary.common.somethingWentWrong
+      );
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
     } finally {
       setLoading(false);
     }
@@ -107,11 +120,7 @@ export default function CompressPage() {
           {loading ? ui.loading : copy.title}
         </button>
 
-        {loading && (
-          <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            {ui.progress}
-          </p>
-        )}
+        {loading && <ToolProgress message={ui.progress} />}
 
         {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
 

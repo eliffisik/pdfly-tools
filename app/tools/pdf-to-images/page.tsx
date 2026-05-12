@@ -3,7 +3,9 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import ToolProgress from "@/app/components/ToolProgress";
 import { useLanguage } from "@/app/components/LanguageProvider";
+import { useToast } from "@/app/components/ToastProvider";
 import { toolText } from "@/app/lib/i18n";
 import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -39,6 +41,7 @@ function canvasToPngBlob(canvas: HTMLCanvasElement, failureMessage: string) {
 
 export default function PdfToImagesPage() {
   const { dictionary, locale } = useLanguage();
+  const { showToast } = useToast();
   const copy = toolText[locale].pdfToImages;
   const ui = dictionary.toolUi.pdfToImages;
   const [file, setFile] = useState<File | null>(null);
@@ -118,8 +121,18 @@ export default function PdfToImagesPage() {
       }
 
       setImages(convertedImages);
+      showToast({
+        type: "success",
+        title: dictionary.common.success,
+        message: dictionary.common.filesReady,
+      });
     } catch (convertError) {
-      setError(getErrorMessage(convertError, dictionary.common.somethingWentWrong));
+      const message = getErrorMessage(
+        convertError,
+        dictionary.common.somethingWentWrong
+      );
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
     } finally {
       setLoading(false);
     }
@@ -185,11 +198,7 @@ export default function PdfToImagesPage() {
           {loading ? ui.loading : ui.button}
         </button>
 
-        {loading && (
-          <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            {ui.progress}
-          </p>
-        )}
+        {loading && <ToolProgress message={ui.progress} />}
 
         {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
 

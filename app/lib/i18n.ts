@@ -22,6 +22,10 @@ export const dictionaries = {
     },
     common: {
       somethingWentWrong: "Something went wrong.",
+      success: "Done",
+      error: "Action failed",
+      fileReady: "Your file is ready to download.",
+      filesReady: "Your files are ready to download.",
       removeFile: "Remove file",
       processingFile: "Processing your file...",
       processingFiles: "Processing your files...",
@@ -211,6 +215,10 @@ export const dictionaries = {
     },
     common: {
       somethingWentWrong: "Bir şeyler ters gitti.",
+      success: "Tamamlandı",
+      error: "İşlem başarısız",
+      fileReady: "Dosyan indirmeye hazır.",
+      filesReady: "Dosyaların indirmeye hazır.",
       removeFile: "Dosyayı kaldır",
       processingFile: "Dosyan işleniyor...",
       processingFiles: "Dosyaların işleniyor...",

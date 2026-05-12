@@ -3,7 +3,9 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import ToolProgress from "@/app/components/ToolProgress";
 import { useLanguage } from "@/app/components/LanguageProvider";
+import { useToast } from "@/app/components/ToastProvider";
 import { toolText } from "@/app/lib/i18n";
 import { useState } from "react";
 
@@ -13,6 +15,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 
 export default function ExtractTextPage() {
   const { dictionary, locale } = useLanguage();
+  const { showToast } = useToast();
   const copy = toolText[locale].extractText;
   const ui = dictionary.toolUi.extractText;
   const [file, setFile] = useState<File | null>(null);
@@ -64,8 +67,18 @@ export default function ExtractTextPage() {
 
       setText(extractedText);
       setTextUrl(URL.createObjectURL(blob));
+      showToast({
+        type: "success",
+        title: dictionary.common.success,
+        message: dictionary.common.fileReady,
+      });
     } catch (extractError) {
-      setError(getErrorMessage(extractError, dictionary.common.somethingWentWrong));
+      const message = getErrorMessage(
+        extractError,
+        dictionary.common.somethingWentWrong
+      );
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
     } finally {
       setLoading(false);
     }
@@ -104,11 +117,7 @@ export default function ExtractTextPage() {
           {loading ? ui.loading : copy.title}
         </button>
 
-        {loading && (
-          <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            {ui.progress}
-          </p>
-        )}
+        {loading && <ToolProgress message={ui.progress} />}
 
         {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
 
