@@ -5,6 +5,7 @@ import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
 import ToolProgress from "@/app/components/ToolProgress";
 import ToolDownloadResult from "@/app/components/ToolDownloadResult";
+import ToolShell from "@/app/components/ToolShell";
 import { useLanguage } from "@/app/components/LanguageProvider";
 import { useToast } from "@/app/components/ToastProvider";
 import { toolText } from "@/app/lib/i18n";
@@ -84,15 +85,11 @@ export default function TextToPdfPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
-      <section className="w-full max-w-2xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-        <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
-          {copy.title}
-        </h1>
-        <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          {copy.description}
-        </p>
-
+    <ToolShell
+      title={copy.title}
+      description={copy.description}
+      maxWidth="2xl"
+    >
         <label
           htmlFor="text-content"
           className="block text-sm font-medium text-zinc-800 dark:text-zinc-200"
@@ -162,7 +159,6 @@ export default function TextToPdfPage() {
             label={ui.download}
           />
         )}
-      </section>
-    </main>
+    </ToolShell>
   );
 }
