@@ -55,7 +55,12 @@ export default function MergePage() {
   };
 
   const handleMerge = async () => {
-    if (files.length < 2) return;
+    if (files.length < 2) {
+      const message = dictionary.common.selectAtLeastTwoPdfs;
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
+      return;
+    }
 
     setLoading(true);
     setMergedPdfUrl("");
@@ -114,6 +119,15 @@ export default function MergePage() {
           multiple
           disabled={loading}
           onFilesSelected={handleFilesSelected}
+          onFilesRejected={() => {
+            const message = dictionary.common.invalidPdfFile;
+            setError(message);
+            showToast({
+              type: "error",
+              title: dictionary.common.error,
+              message,
+            });
+          }}
         />
         <ToolPrivacyNote />
 
@@ -136,7 +150,7 @@ export default function MergePage() {
         <button
           type="button"
           onClick={handleMerge}
-          disabled={loading || files.length < 2}
+          disabled={loading}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? ui.loading : copy.title}

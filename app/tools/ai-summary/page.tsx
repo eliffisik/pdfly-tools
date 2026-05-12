@@ -36,7 +36,12 @@ export default function AISummaryPage() {
   };
 
   const handleSummary = async () => {
-    if (!file) return;
+    if (!file) {
+      const message = dictionary.common.selectPdfFile;
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
+      return;
+    }
 
     setLoading(true);
     setSummary("");
@@ -90,6 +95,15 @@ export default function AISummaryPage() {
           helperText={dictionary.common.chooseTextPdf}
           disabled={loading}
           onFilesSelected={handleFilesSelected}
+          onFilesRejected={() => {
+            const message = dictionary.common.invalidPdfFile;
+            setError(message);
+            showToast({
+              type: "error",
+              title: dictionary.common.error,
+              message,
+            });
+          }}
         />
         <ToolPrivacyNote ai />
 
@@ -102,7 +116,7 @@ export default function AISummaryPage() {
         <button
           type="button"
           onClick={handleSummary}
-          disabled={loading || !file}
+          disabled={loading}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? ui.loading : ui.button}

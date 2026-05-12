@@ -39,7 +39,12 @@ export default function ExtractTextPage() {
   };
 
   const handleExtractText = async () => {
-    if (!file) return;
+    if (!file) {
+      const message = dictionary.common.selectPdfFile;
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
+      return;
+    }
 
     setLoading(true);
     setText("");
@@ -99,6 +104,15 @@ export default function ExtractTextPage() {
           helperText={dictionary.common.chooseTextPdf}
           disabled={loading}
           onFilesSelected={handleFilesSelected}
+          onFilesRejected={() => {
+            const message = dictionary.common.invalidPdfFile;
+            setError(message);
+            showToast({
+              type: "error",
+              title: dictionary.common.error,
+              message,
+            });
+          }}
         />
         <ToolPrivacyNote />
 
@@ -111,7 +125,7 @@ export default function ExtractTextPage() {
         <button
           type="button"
           onClick={handleExtractText}
-          disabled={loading || !file}
+          disabled={loading}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? ui.loading : copy.title}

@@ -38,7 +38,12 @@ export default function TextToPdfPage() {
   };
 
   const handleConvert = async () => {
-    if (!text.trim() && !file) return;
+    if (!text.trim() && !file) {
+      const message = dictionary.common.enterTextOrTxt;
+      setError(message);
+      showToast({ type: "error", title: dictionary.common.error, message });
+      return;
+    }
 
     setLoading(true);
     setPdfUrl("");
@@ -119,6 +124,15 @@ export default function TextToPdfPage() {
           accept="text/plain,.txt"
           disabled={loading}
           onFilesSelected={handleFilesSelected}
+          onFilesRejected={() => {
+            const message = dictionary.common.invalidTxtFile;
+            setError(message);
+            showToast({
+              type: "error",
+              title: dictionary.common.error,
+              message,
+            });
+          }}
         />
         <ToolPrivacyNote />
 
@@ -131,7 +145,7 @@ export default function TextToPdfPage() {
         <button
           type="button"
           onClick={handleConvert}
-          disabled={loading || (!text.trim() && !file)}
+          disabled={loading}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? ui.loading : ui.button}

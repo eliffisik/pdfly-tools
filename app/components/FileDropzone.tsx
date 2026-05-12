@@ -10,6 +10,7 @@ type FileDropzoneProps = {
   multiple?: boolean;
   disabled?: boolean;
   onFilesSelected: (files: File[]) => void;
+  onFilesRejected?: (files: File[]) => void;
 };
 
 export default function FileDropzone({
@@ -19,15 +20,46 @@ export default function FileDropzone({
   multiple = false,
   disabled = false,
   onFilesSelected,
+  onFilesRejected,
 }: FileDropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const isAcceptedFile = (file: File) => {
+    const acceptedTypes = accept
+      .split(",")
+      .map((type) => type.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (acceptedTypes.length === 0) return true;
+
+    const fileName = file.name.toLowerCase();
+    const fileType = file.type.toLowerCase();
+
+    return acceptedTypes.some((acceptedType) => {
+      if (acceptedType.startsWith(".")) return fileName.endsWith(acceptedType);
+      if (acceptedType.endsWith("/*")) {
+        return fileType.startsWith(acceptedType.replace("*", ""));
+      }
+
+      return fileType === acceptedType;
+    });
+  };
 
   const selectFiles = (fileList: FileList | null) => {
     if (!fileList || disabled) return;
 
     const files = Array.from(fileList);
-    onFilesSelected(multiple ? files : files.slice(0, 1));
+    const acceptedFiles = files.filter(isAcceptedFile);
+    const rejectedFiles = files.filter((file) => !isAcceptedFile(file));
+
+    if (rejectedFiles.length > 0) {
+      onFilesRejected?.(rejectedFiles);
+    }
+
+    if (acceptedFiles.length > 0) {
+      onFilesSelected(multiple ? acceptedFiles : acceptedFiles.slice(0, 1));
+    }
 
     if (inputRef.current) {
       inputRef.current.value = "";
