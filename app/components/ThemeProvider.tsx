@@ -11,9 +11,7 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "light";
-
+function getPreferredTheme(): Theme {
   const storedTheme = window.localStorage.getItem("pdfly-theme");
   if (storedTheme === "light" || storedTheme === "dark") return storedTheme;
 
@@ -23,7 +21,15 @@ function getInitialTheme(): Theme {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
+  const [theme, setTheme] = useState<Theme>("light");
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setTheme(getPreferredTheme());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
