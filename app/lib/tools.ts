@@ -110,6 +110,15 @@ export const tools: Tool[] = [
     icon: FileText,
   },
   {
+    href: "/tools/text-to-pdf",
+    title: "Text to PDF",
+    shortTitle: "Text to PDF",
+    description: "Convert typed text or TXT files into a PDF document.",
+    status: "available",
+    category: "Convert",
+    icon: FileText,
+  },
+  {
     href: "/tools/pdf-to-images",
     title: "PDF to Images",
     shortTitle: "PDF to Images",
