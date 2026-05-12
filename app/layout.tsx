@@ -1,5 +1,6 @@
 import "./globals.css";
 import Footer from "./components/Footer";
+import { LanguageProvider } from "./components/LanguageProvider";
 import Navbar from "./components/Navbar";
 import PageTransition from "./components/PageTransition";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -18,9 +19,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="bg-white text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-white">
         <ThemeProvider>
-          <Navbar />
-          <PageTransition>{children}</PageTransition>
-          <Footer />
+          <LanguageProvider>
+            <Navbar />
+            <PageTransition>{children}</PageTransition>
+            <Footer />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

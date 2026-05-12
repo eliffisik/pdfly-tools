@@ -13,11 +13,13 @@ import {
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
+import type { ToolTextKey } from "./i18n";
 
 export type ToolStatus = "available" | "coming-soon";
 export type ToolCategory = "Organize" | "Convert" | "Optimize" | "AI";
 
 export type Tool = {
+  id: ToolTextKey;
   href: string;
   title: string;
   shortTitle: string;
@@ -29,6 +31,7 @@ export type Tool = {
 
 export const tools: Tool[] = [
   {
+    id: "merge",
     href: "/tools/merge",
     title: "Merge PDFs",
     shortTitle: "Merge",
@@ -38,6 +41,7 @@ export const tools: Tool[] = [
     icon: FilePlus,
   },
   {
+    id: "split",
     href: "/tools/split",
     title: "Split PDF",
     shortTitle: "Split",
@@ -47,6 +51,7 @@ export const tools: Tool[] = [
     icon: Scissors,
   },
   {
+    id: "compress",
     href: "/tools/compress",
     title: "Compress PDF",
     shortTitle: "Compress",
@@ -56,6 +61,7 @@ export const tools: Tool[] = [
     icon: FileDown,
   },
   {
+    id: "rotate",
     href: "/tools/rotate",
     title: "Rotate PDF",
     shortTitle: "Rotate",
@@ -65,6 +71,7 @@ export const tools: Tool[] = [
     icon: RotateCw,
   },
   {
+    id: "deletePages",
     href: "/tools/delete-pages",
     title: "Delete Pages",
     shortTitle: "Delete",
@@ -74,6 +81,7 @@ export const tools: Tool[] = [
     icon: FileMinus,
   },
   {
+    id: "reorderPages",
     href: "/tools/reorder-pages",
     title: "Reorder Pages",
     shortTitle: "Reorder",
@@ -83,6 +91,7 @@ export const tools: Tool[] = [
     icon: ListOrdered,
   },
   {
+    id: "pageNumbers",
     href: "/tools/page-numbers",
     title: "Add Page Numbers",
     shortTitle: "Page Numbers",
@@ -92,6 +101,7 @@ export const tools: Tool[] = [
     icon: ListPlus,
   },
   {
+    id: "aiSummary",
     href: "/tools/ai-summary",
     title: "AI Summary",
     shortTitle: "AI Summary",
@@ -101,6 +111,7 @@ export const tools: Tool[] = [
     icon: Sparkles,
   },
   {
+    id: "extractText",
     href: "/tools/extract-text",
     title: "Extract Text",
     shortTitle: "Extract Text",
@@ -110,6 +121,7 @@ export const tools: Tool[] = [
     icon: FileText,
   },
   {
+    id: "textToPdf",
     href: "/tools/text-to-pdf",
     title: "Text to PDF",
     shortTitle: "Text to PDF",
@@ -119,6 +131,7 @@ export const tools: Tool[] = [
     icon: FileText,
   },
   {
+    id: "pdfToImages",
     href: "/tools/pdf-to-images",
     title: "PDF to Images",
     shortTitle: "PDF to Images",
@@ -128,6 +141,7 @@ export const tools: Tool[] = [
     icon: FileImage,
   },
   {
+    id: "imagesToPdf",
     href: "/tools/images-to-pdf",
     title: "Images to PDF",
     shortTitle: "Images to PDF",
@@ -137,6 +151,7 @@ export const tools: Tool[] = [
     icon: Images,
   },
   {
+    id: "pdfToWord",
     href: "/tools/pdf-to-word",
     title: "PDF to Word",
     shortTitle: "PDF to Word",
@@ -146,6 +161,7 @@ export const tools: Tool[] = [
     icon: FileText,
   },
   {
+    id: "wordToPdf",
     href: "/tools/word-to-pdf",
     title: "Word to PDF",
     shortTitle: "Word to PDF",
@@ -155,6 +171,7 @@ export const tools: Tool[] = [
     icon: FileText,
   },
   {
+    id: "askPdf",
     href: "/tools/ask-pdf",
     title: "Ask PDF",
     shortTitle: "Ask PDF",

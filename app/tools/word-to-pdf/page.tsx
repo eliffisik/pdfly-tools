@@ -1,3 +1,5 @@
+ "use client";
+
 import ComingSoonTool from "@/app/components/ComingSoonTool";
 import { getToolByHref } from "@/app/lib/tools";
 

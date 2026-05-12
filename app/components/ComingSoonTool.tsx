@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { toolText } from "@/app/lib/i18n";
 import type { Tool } from "@/app/lib/tools";
+import { useLanguage } from "./LanguageProvider";
 
 type ComingSoonToolProps = {
   tool: Tool;
@@ -8,6 +12,8 @@ type ComingSoonToolProps = {
 
 export default function ComingSoonTool({ tool }: ComingSoonToolProps) {
   const Icon = tool.icon;
+  const { dictionary, locale } = useLanguage();
+  const copy = toolText[locale][tool.id];
 
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-16 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-white">
@@ -17,17 +23,16 @@ export default function ComingSoonTool({ tool }: ComingSoonToolProps) {
           className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-600 transition hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-300"
         >
           <ArrowLeft className="h-4 w-4" />
-          All tools
+          {dictionary.comingSoon.allTools}
         </Link>
 
         <Icon className="mb-5 h-10 w-10 text-blue-500" />
         <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-blue-600 dark:text-blue-300">
-          Coming soon
+          {dictionary.comingSoon.eyebrow}
         </p>
-        <h1 className="text-3xl font-bold">{tool.title}</h1>
+        <h1 className="text-3xl font-bold">{copy.title}</h1>
         <p className="mt-4 leading-7 text-zinc-600 dark:text-zinc-400">
-          {tool.description} This tool is part of the product skeleton and will
-          be implemented after the core flows are stable.
+          {copy.description} {dictionary.comingSoon.suffix}
         </p>
       </section>
     </main>

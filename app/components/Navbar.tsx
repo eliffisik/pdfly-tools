@@ -4,13 +4,17 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { toolText } from "@/app/lib/i18n";
 import { availableTools } from "@/app/lib/tools";
+import LanguageToggle from "./LanguageToggle";
+import { useLanguage } from "./LanguageProvider";
 import PDFlyLogo from "./PDFlyLogo";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { dictionary, locale } = useLanguage();
 
   const isActive = (path: string) =>
     pathname === path ||
@@ -34,11 +38,11 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-5 text-sm lg:flex">
           <Link href="/" className={linkClass(isActive("/"))}>
-            Home
+            {dictionary.nav.home}
           </Link>
 
           <Link href="/tools" className={linkClass(pathname === "/tools")}>
-            Tools
+            {dictionary.nav.tools}
           </Link>
 
           <div className="group relative">
@@ -46,7 +50,7 @@ export default function Navbar() {
               type="button"
               className={linkClass(pathname.startsWith("/tools/"))}
             >
-              PDF Tools
+              {dictionary.nav.pdfTools}
             </button>
 
             <div className="invisible absolute right-0 top-full w-64 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
@@ -61,23 +65,29 @@ export default function Navbar() {
                         : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                     }`}
                   >
-                    {tool.title}
+                    {toolText[locale][tool.id].title}
                   </Link>
                 ))}
               </div>
             </div>
           </div>
 
+          <LanguageToggle />
           <ThemeToggle />
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
+          <LanguageToggle />
           <ThemeToggle />
           <button
             type="button"
             onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
             className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-700 transition hover:border-blue-300 hover:text-blue-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-blue-500 dark:hover:text-blue-300"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label={
+              mobileMenuOpen
+                ? dictionary.nav.closeMenu
+                : dictionary.nav.openMenu
+            }
             aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? (
@@ -99,7 +109,7 @@ export default function Navbar() {
                 isActive("/")
               )}`}
             >
-              Home
+              {dictionary.nav.home}
             </Link>
 
             <Link
@@ -109,7 +119,7 @@ export default function Navbar() {
                 pathname === "/tools"
               )}`}
             >
-              Tools
+              {dictionary.nav.tools}
             </Link>
 
             <div className="mt-2 border-t border-zinc-200 pt-2 dark:border-zinc-800">
@@ -124,7 +134,7 @@ export default function Navbar() {
                       : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                   }`}
                 >
-                  {tool.title}
+                  {toolText[locale][tool.id].title}
                 </Link>
               ))}
             </div>
