@@ -3,13 +3,18 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import { useLanguage } from "@/app/components/LanguageProvider";
+import { toolText } from "@/app/lib/i18n";
 import { useState } from "react";
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Something went wrong.";
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
 
 export default function MergePage() {
+  const { dictionary, locale } = useLanguage();
+  const copy = toolText[locale].merge;
+  const ui = dictionary.toolUi.merge;
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [mergedPdfUrl, setMergedPdfUrl] = useState("");
@@ -63,13 +68,13 @@ export default function MergePage() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error || "Merge failed.");
+        throw new Error(data?.error || dictionary.common.somethingWentWrong);
       }
 
       const blob = await response.blob();
       setMergedPdfUrl(URL.createObjectURL(blob));
     } catch (mergeError) {
-      setError(getErrorMessage(mergeError));
+      setError(getErrorMessage(mergeError, dictionary.common.somethingWentWrong));
     } finally {
       setLoading(false);
     }
@@ -79,15 +84,19 @@ export default function MergePage() {
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
       <section className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
-          Merge PDFs
+          {copy.title}
         </h1>
         <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Upload at least two PDFs and combine them in the selected order.
+          {copy.description}
         </p>
 
         <FileDropzone
-          label={files.length > 0 ? "Add more PDFs" : "Drop PDFs here"}
-          helperText="drop more files or click to choose multiple PDFs"
+          label={
+            files.length > 0
+              ? dictionary.common.addMorePdfs
+              : dictionary.common.dropPdfs
+          }
+          helperText={dictionary.common.chooseMultiplePdfs}
           multiple
           disabled={loading}
           onFilesSelected={handleFilesSelected}
@@ -97,7 +106,7 @@ export default function MergePage() {
         {files.length > 0 && (
           <div className="mt-6 space-y-3">
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Selected files ({files.length})
+              {dictionary.common.selectedFiles} ({files.length})
             </p>
 
             {files.map((file, index) => (
@@ -116,12 +125,12 @@ export default function MergePage() {
           disabled={loading || files.length < 2}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Merging PDFs..." : "Merge PDFs"}
+          {loading ? ui.loading : copy.title}
         </button>
 
         {loading && (
           <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            Processing your files...
+            {ui.progress}
           </p>
         )}
 
@@ -134,7 +143,7 @@ export default function MergePage() {
               download="merged.pdf"
               className="inline-flex rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
             >
-              Download merged PDF
+              {ui.download}
             </a>
           </div>
         )}

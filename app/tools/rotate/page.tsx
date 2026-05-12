@@ -3,16 +3,21 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import { useLanguage } from "@/app/components/LanguageProvider";
+import { toolText } from "@/app/lib/i18n";
 import { RotateCw } from "lucide-react";
 import { useState } from "react";
 
 const rotationAngles = [90, 180, 270];
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Something went wrong.";
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
 
 export default function RotatePage() {
+  const { dictionary, locale } = useLanguage();
+  const copy = toolText[locale].rotate;
+  const ui = dictionary.toolUi.rotate;
   const [file, setFile] = useState<File | null>(null);
   const [ranges, setRanges] = useState("");
   const [angle, setAngle] = useState(90);
@@ -52,13 +57,13 @@ export default function RotatePage() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error || "Rotation failed.");
+        throw new Error(data?.error || dictionary.common.somethingWentWrong);
       }
 
       const blob = await response.blob();
       setRotatedUrl(URL.createObjectURL(blob));
     } catch (rotateError) {
-      setError(getErrorMessage(rotateError));
+      setError(getErrorMessage(rotateError, dictionary.common.somethingWentWrong));
     } finally {
       setLoading(false);
     }
@@ -68,15 +73,15 @@ export default function RotatePage() {
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
       <section className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
-          Rotate PDF
+          {copy.title}
         </h1>
         <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Rotate every page, or target specific page ranges.
+          {copy.description}
         </p>
 
         <FileDropzone
-          label="Drop a PDF here"
-          helperText="or click to choose one PDF file"
+          label={dictionary.common.dropPdf}
+          helperText={dictionary.common.chooseOnePdf}
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
@@ -90,7 +95,7 @@ export default function RotatePage() {
 
         <div className="mt-6">
           <p className="mb-2 text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            Rotation
+            {ui.rotation}
           </p>
           <div className="grid grid-cols-3 gap-2">
             {rotationAngles.map((rotationAngle) => (
@@ -110,7 +115,7 @@ export default function RotatePage() {
                 }`}
               >
                 <RotateCw className="h-4 w-4" />
-                {rotationAngle} deg
+                {rotationAngle} {ui.degree}
               </button>
             ))}
           </div>
@@ -120,7 +125,7 @@ export default function RotatePage() {
           htmlFor="page-ranges"
           className="mt-6 block text-sm font-medium text-zinc-800 dark:text-zinc-200"
         >
-          Page ranges
+          {dictionary.common.pageRanges}
         </label>
         <input
           id="page-ranges"
@@ -131,12 +136,12 @@ export default function RotatePage() {
             setRotatedUrl("");
             setError("");
           }}
-          placeholder="Leave empty for all pages"
+          placeholder={ui.allPagesPlaceholder}
           disabled={loading}
           className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-blue-950"
         />
         <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-500">
-          Optional. Use formats like 1-3,5,8-10.
+          {dictionary.common.optionalPageRangesHelp}
         </p>
 
         <button
@@ -145,12 +150,12 @@ export default function RotatePage() {
           disabled={loading || !file}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Rotating PDF..." : "Rotate PDF"}
+          {loading ? ui.loading : copy.title}
         </button>
 
         {loading && (
           <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            Applying rotation...
+            {ui.progress}
           </p>
         )}
 
@@ -163,7 +168,7 @@ export default function RotatePage() {
               download="rotated.pdf"
               className="inline-flex rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
             >
-              Download rotated PDF
+              {ui.download}
             </a>
           </div>
         )}

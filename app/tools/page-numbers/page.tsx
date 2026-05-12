@@ -3,13 +3,18 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import { useLanguage } from "@/app/components/LanguageProvider";
+import { toolText } from "@/app/lib/i18n";
 import { useState } from "react";
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Something went wrong.";
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
 
 export default function PageNumbersPage() {
+  const { dictionary, locale } = useLanguage();
+  const copy = toolText[locale].pageNumbers;
+  const ui = dictionary.toolUi.pageNumbers;
   const [file, setFile] = useState<File | null>(null);
   const [startNumber, setStartNumber] = useState("1");
   const [loading, setLoading] = useState(false);
@@ -47,13 +52,15 @@ export default function PageNumbersPage() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error || "Page numbering failed.");
+        throw new Error(data?.error || dictionary.common.somethingWentWrong);
       }
 
       const blob = await response.blob();
       setPdfUrl(URL.createObjectURL(blob));
     } catch (pageNumberError) {
-      setError(getErrorMessage(pageNumberError));
+      setError(
+        getErrorMessage(pageNumberError, dictionary.common.somethingWentWrong)
+      );
     } finally {
       setLoading(false);
     }
@@ -63,15 +70,15 @@ export default function PageNumbersPage() {
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
       <section className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
-          Add Page Numbers
+          {copy.title}
         </h1>
         <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Add centered page numbers to the bottom of every PDF page.
+          {copy.description}
         </p>
 
         <FileDropzone
-          label="Drop a PDF here"
-          helperText="or click to choose one PDF file"
+          label={dictionary.common.dropPdf}
+          helperText={dictionary.common.chooseOnePdf}
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
@@ -87,7 +94,7 @@ export default function PageNumbersPage() {
           htmlFor="start-number"
           className="mt-6 block text-sm font-medium text-zinc-800 dark:text-zinc-200"
         >
-          Start number
+          {ui.startNumber}
         </label>
         <input
           id="start-number"
@@ -110,12 +117,12 @@ export default function PageNumbersPage() {
           disabled={loading || !file || !startNumber.trim()}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Adding page numbers..." : "Add Page Numbers"}
+          {loading ? ui.loading : copy.title}
         </button>
 
         {loading && (
           <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            Numbering your PDF pages...
+            {ui.progress}
           </p>
         )}
 
@@ -128,7 +135,7 @@ export default function PageNumbersPage() {
               download="numbered.pdf"
               className="inline-flex rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
             >
-              Download numbered PDF
+              {ui.download}
             </a>
           </div>
         )}

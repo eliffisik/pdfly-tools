@@ -3,11 +3,13 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import { useLanguage } from "@/app/components/LanguageProvider";
 import { formatFileSize } from "@/app/lib/format";
+import { toolText } from "@/app/lib/i18n";
 import { useState } from "react";
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Something went wrong.";
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
 
 type CompressionResult = {
@@ -17,6 +19,9 @@ type CompressionResult = {
 };
 
 export default function CompressPage() {
+  const { dictionary, locale } = useLanguage();
+  const copy = toolText[locale].compress;
+  const ui = dictionary.toolUi.compress;
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [compressionResult, setCompressionResult] =
@@ -53,7 +58,7 @@ export default function CompressPage() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error || "Compression failed.");
+        throw new Error(data?.error || dictionary.common.somethingWentWrong);
       }
 
       const blob = await response.blob();
@@ -63,7 +68,7 @@ export default function CompressPage() {
         url: URL.createObjectURL(blob),
       });
     } catch (compressError) {
-      setError(getErrorMessage(compressError));
+      setError(getErrorMessage(compressError, dictionary.common.somethingWentWrong));
     } finally {
       setLoading(false);
     }
@@ -73,15 +78,15 @@ export default function CompressPage() {
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
       <section className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
-          Compress PDF
+          {copy.title}
         </h1>
         <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Rebuild a PDF with object streams to reduce structural overhead.
+          {copy.description}
         </p>
 
         <FileDropzone
-          label="Drop a PDF here"
-          helperText="or click to choose one PDF file"
+          label={dictionary.common.dropPdf}
+          helperText={dictionary.common.chooseOnePdf}
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
@@ -99,12 +104,12 @@ export default function CompressPage() {
           disabled={loading || !file}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Compressing..." : "Compress PDF"}
+          {loading ? ui.loading : copy.title}
         </button>
 
         {loading && (
           <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            Processing your file...
+            {ui.progress}
           </p>
         )}
 
@@ -114,19 +119,19 @@ export default function CompressPage() {
           <div className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center dark:border-zinc-800 dark:bg-zinc-950">
             <div className="grid gap-3 text-sm sm:grid-cols-3">
               <div>
-                <p className="text-zinc-500 dark:text-zinc-500">Original</p>
+                <p className="text-zinc-500 dark:text-zinc-500">{ui.original}</p>
                 <p className="font-semibold text-zinc-900 dark:text-white">
                   {formatFileSize(compressionResult.originalSize)}
                 </p>
               </div>
               <div>
-                <p className="text-zinc-500 dark:text-zinc-500">Output</p>
+                <p className="text-zinc-500 dark:text-zinc-500">{ui.output}</p>
                 <p className="font-semibold text-zinc-900 dark:text-white">
                   {formatFileSize(compressionResult.compressedSize)}
                 </p>
               </div>
               <div>
-                <p className="text-zinc-500 dark:text-zinc-500">Change</p>
+                <p className="text-zinc-500 dark:text-zinc-500">{ui.change}</p>
                 <p className="font-semibold text-zinc-900 dark:text-white">
                   {Math.abs(
                     ((compressionResult.originalSize -
@@ -137,8 +142,8 @@ export default function CompressPage() {
                   %
                   {compressionResult.compressedSize <=
                   compressionResult.originalSize
-                    ? " smaller"
-                    : " larger"}
+                    ? ` ${ui.smaller}`
+                    : ` ${ui.larger}`}
                 </p>
               </div>
             </div>
@@ -148,7 +153,7 @@ export default function CompressPage() {
               download="compressed.pdf"
               className="mt-5 inline-flex rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
             >
-              Download compressed PDF
+              {ui.download}
             </a>
           </div>
         )}

@@ -3,13 +3,18 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import { useLanguage } from "@/app/components/LanguageProvider";
+import { toolText } from "@/app/lib/i18n";
 import { useState } from "react";
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Something went wrong.";
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
 
 export default function AISummaryPage() {
+  const { dictionary, locale } = useLanguage();
+  const copy = toolText[locale].aiSummary;
+  const ui = dictionary.toolUi.aiSummary;
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
@@ -46,12 +51,12 @@ export default function AISummaryPage() {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(data?.error || "Summary failed.");
+        throw new Error(data?.error || dictionary.common.somethingWentWrong);
       }
 
       setSummary(data?.summary || "");
     } catch (summaryError) {
-      setError(getErrorMessage(summaryError));
+      setError(getErrorMessage(summaryError, dictionary.common.somethingWentWrong));
     } finally {
       setLoading(false);
     }
@@ -61,15 +66,15 @@ export default function AISummaryPage() {
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
       <section className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
-          AI Summary
+          {copy.title}
         </h1>
         <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Upload a text-based PDF and turn it into a concise summary.
+          {copy.description}
         </p>
 
         <FileDropzone
-          label="Drop a PDF here"
-          helperText="or click to choose one text-based PDF"
+          label={dictionary.common.dropPdf}
+          helperText={dictionary.common.chooseTextPdf}
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
@@ -87,12 +92,12 @@ export default function AISummaryPage() {
           disabled={loading || !file}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Summarizing..." : "Summarize PDF"}
+          {loading ? ui.loading : ui.button}
         </button>
 
         {loading && (
           <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            Reading the PDF and preparing the summary...
+            {ui.progress}
           </p>
         )}
 
@@ -101,7 +106,7 @@ export default function AISummaryPage() {
         {summary && !loading && !error && (
           <div className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950">
             <h2 className="mb-2 text-lg font-semibold text-zinc-950 dark:text-white">
-              Summary
+              {ui.resultTitle}
             </h2>
             <p className="whitespace-pre-line text-sm leading-6 text-zinc-700 dark:text-zinc-200">
               {summary}

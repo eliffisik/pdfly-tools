@@ -3,6 +3,8 @@
 import FileDropzone from "@/app/components/FileDropzone";
 import SelectedFileRow from "@/app/components/SelectedFileRow";
 import ToolPrivacyNote from "@/app/components/ToolPrivacyNote";
+import { useLanguage } from "@/app/components/LanguageProvider";
+import { toolText } from "@/app/lib/i18n";
 import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -13,20 +15,20 @@ type ConvertedImage = {
 };
 
 const scaleOptions = [
-  { label: "Standard", value: 1.5 },
-  { label: "High", value: 2 },
-  { label: "Ultra", value: 3 },
-];
+  { labelKey: "standard", value: 1.5 },
+  { labelKey: "high", value: 2 },
+  { labelKey: "ultra", value: 3 },
+] as const;
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Something went wrong.";
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
 
-function canvasToPngBlob(canvas: HTMLCanvasElement) {
+function canvasToPngBlob(canvas: HTMLCanvasElement, failureMessage: string) {
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) {
-        reject(new Error("Could not create an image from this page."));
+        reject(new Error(failureMessage));
         return;
       }
 
@@ -36,6 +38,9 @@ function canvasToPngBlob(canvas: HTMLCanvasElement) {
 }
 
 export default function PdfToImagesPage() {
+  const { dictionary, locale } = useLanguage();
+  const copy = toolText[locale].pdfToImages;
+  const ui = dictionary.toolUi.pdfToImages;
   const [file, setFile] = useState<File | null>(null);
   const [scale, setScale] = useState(2);
   const [loading, setLoading] = useState(false);
@@ -92,7 +97,7 @@ export default function PdfToImagesPage() {
         const canvasContext = canvas.getContext("2d");
 
         if (!canvasContext) {
-          throw new Error("Canvas is not supported in this browser.");
+          throw new Error(ui.canvasUnsupported);
         }
 
         canvas.width = Math.ceil(viewport.width);
@@ -104,7 +109,7 @@ export default function PdfToImagesPage() {
           viewport,
         }).promise;
 
-        const blob = await canvasToPngBlob(canvas);
+        const blob = await canvasToPngBlob(canvas, ui.imageCreateError);
         convertedImages.push({
           pageNumber,
           fileName: `page-${String(pageNumber).padStart(2, "0")}.png`,
@@ -114,7 +119,7 @@ export default function PdfToImagesPage() {
 
       setImages(convertedImages);
     } catch (convertError) {
-      setError(getErrorMessage(convertError));
+      setError(getErrorMessage(convertError, dictionary.common.somethingWentWrong));
     } finally {
       setLoading(false);
     }
@@ -124,15 +129,15 @@ export default function PdfToImagesPage() {
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 transition-colors dark:bg-zinc-950">
       <section className="w-full max-w-2xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <h1 className="mb-2 text-center text-3xl font-bold text-zinc-950 dark:text-white">
-          PDF to Images
+          {copy.title}
         </h1>
         <p className="mb-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Convert each PDF page into a downloadable PNG image.
+          {copy.description}
         </p>
 
         <FileDropzone
-          label="Drop a PDF here"
-          helperText="or click to choose one PDF file"
+          label={dictionary.common.dropPdf}
+          helperText={dictionary.common.chooseOnePdf}
           disabled={loading}
           onFilesSelected={handleFilesSelected}
         />
@@ -146,7 +151,7 @@ export default function PdfToImagesPage() {
 
         <div className="mt-6">
           <p className="mb-2 text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            Image quality
+            {ui.quality}
           </p>
           <div className="grid grid-cols-3 gap-2">
             {scaleOptions.map((option) => (
@@ -165,7 +170,7 @@ export default function PdfToImagesPage() {
                     : "border-zinc-300 bg-white text-zinc-700 hover:border-blue-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
                 }`}
               >
-                {option.label}
+                {ui[option.labelKey]}
               </button>
             ))}
           </div>
@@ -177,12 +182,12 @@ export default function PdfToImagesPage() {
           disabled={loading || !file}
           className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Converting pages..." : "Convert to PNG"}
+          {loading ? ui.loading : ui.button}
         </button>
 
         {loading && (
           <p className="mt-4 text-center text-sm text-zinc-600 dark:text-zinc-400">
-            Rendering PDF pages in your browser...
+            {ui.progress}
           </p>
         )}
 
@@ -191,7 +196,7 @@ export default function PdfToImagesPage() {
         {images.length > 0 && !loading && !error && (
           <div className="mt-6 space-y-3">
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Converted images ({images.length})
+              {ui.resultTitle} ({images.length})
             </p>
 
             <div className="grid gap-3 sm:grid-cols-2">
@@ -205,7 +210,7 @@ export default function PdfToImagesPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={image.url}
-                    alt={`Page ${image.pageNumber}`}
+                    alt={`${locale === "tr" ? "Sayfa" : "Page"} ${image.pageNumber}`}
                     className="mb-3 aspect-[3/4] w-full rounded-md border border-zinc-200 object-contain bg-white dark:border-zinc-800"
                   />
                   <span className="flex items-center justify-between gap-3 text-sm font-medium text-zinc-800 dark:text-zinc-200">
