@@ -7,7 +7,6 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { ToastProvider } from "./components/ToastProvider";
 
 export const metadata = {
-  metadataBase: new URL("https://pdfly.tools"),
   title: {
     default: "PDFly - Fast PDF Tools",
     template: "%s | PDFly",
