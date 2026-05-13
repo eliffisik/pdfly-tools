@@ -2,6 +2,8 @@
 
 PDFly is a full-stack PDF tools MVP built with Next.js. It brings common PDF workflows into one focused web workspace: merge, split, compress, rotate, reorder, extract text, convert files, and summarize text-based PDFs with AI.
 
+[Live Demo](https://pdfly-tools.vercel.app)
+
 ![PDFly homepage preview](public/pdfly-home-preview.svg)
 
 ## Highlights
